@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>文字图片消消乐 - 固定版</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      background: #f5f5f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #gameContainer {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 15px;
+      max-width: 800px;
+      margin-top: 100px;
+    }
+    .card {
+      width: 120px;
+      height: 140px;
+      background: white;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .card.selected {
+      transform: scale(1.05);
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    .card img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 10px;
+    }
+    .pinyin {
+      font-size: 20px;
+      color: #333;
+      margin-bottom: 4px;
+    }
+    .hanzi {
+      font-size: 26px;
+      color: #111;
+    }
+    #winMessage {
+      font-size: 2em;
+      color: green;
+      margin-top: 20px;
+    }
+    #qrcode-container {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: rgba(255,255,255,0.8);
+      padding: 6px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      cursor: pointer;
+    }
+    #qrcode {
+      width: 90px;
+      height: 90px;
+    }
+  </style>
+</head>
+<body>
+  <div id="qrcode-container" onclick="window.location.href=window.location.href">
+    <div id="qrcode"></div>
+  </div>
+
+  <h2>🍎 跟Jennie学中文：水果 & 动物</h2>
+  <div id="gameContainer"></div>
+  <div id="winMessage" style="display:none;">🎉 通关成功！</div>
+
+  <script>
+    const data = [
+      {
+        word: "苹果",
+        pinyin: "pīng guǒ",
+        image: "https://openmoji.org/data/color/svg/1F34E.svg"
+      },
+      {
+        word: "香蕉",
+        pinyin: "xiāng jiāo",
+        image: "https://openmoji.org/data/color/svg/1F34C.svg"
+      },
+      {
+        word: "乌龟",
+        pinyin: "wū guī",
+        image: "https://openmoji.org/data/color/svg/1F422.svg"
+      },
+      {
+        word: "葡萄",
+        pinyin: "pú táo",
+        image: "https://openmoji.org/data/color/svg/1F347.svg"
+      }
+    ];
+
+    const container = document.getElementById('gameContainer');
+    let selected = [];
+    let matched = 0;
+
+    const cards = [];
+    data.forEach(item => {
+      for (let i = 0; i < 2; i++) {
+        const card = document.createElement('div');
+        card.className = 'card text';
+        card.dataset.word = item.word;
+        card.innerHTML = `<div class="pinyin">${item.pinyin}</div><div class="hanzi">${item.word}</div>`;
+        cards.push(card);
+      }
+      for (let i = 0; i < 2; i++) {
+        const card = document.createElement('div');
+        card.className = 'card image';
+        card.dataset.word = item.word;
+        card.innerHTML = `<img src="${item.image}" alt="${item.word}">`;
+        cards.push(card);
+      }
+    });
+
+    shuffle(cards);
+    cards.forEach(card => {
+      container.appendChild(card);
+      card.addEventListener('click', () => {
+        if (card.classList.contains('selected') || selected.length === 2) return;
+        card.classList.add('selected');
+        selected.push(card);
+        if (selected.length === 2) {
+          setTimeout(checkMatch, 400);
+        }
+      });
+    });
+
+    function playSound(filename) {
+      const audio = new Audio(filename);
+      audio.play();
+    }
+
+    function checkMatch() {
+      const [a, b] = selected;
+      if (a.dataset.word === b.dataset.word && a.className !== b.className) {
+        playSound("success.mp3");
+        a.style.visibility = 'hidden';
+        b.style.visibility = 'hidden';
+        matched += 2;
+        if (matched === data.length * 4) {
+          playSound("cheer.mp3");
+          document.getElementById('winMessage').style.display = 'block';
+        }
+      } else {
+        playSound("fail.mp3");
+        a.classList.remove('selected');
+        b.classList.remove('selected');
+      }
+      selected = [];
+    }
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+    }
+
+    new QRCode(document.getElementById("qrcode"), {
+      text: window.location.href,
+      width: 90,
+      height: 90,
+      colorDark: "#000000",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.H
+    });
+  </script>
+</body>
+</html>
