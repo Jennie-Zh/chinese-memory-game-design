@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title> 消消乐-跟Jennie学中文 </title>
+  <title>跟Jennie学中文-消消乐</title>
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
   <style>
     body {
@@ -10,9 +10,17 @@
       margin: 0;
       padding: 20px;
       min-height: 100vh;
-      background: url('summer.jpg') no-repeat center center fixed;
-      background-size: cover;
       position: relative;
+      z-index: 0;
+    }
+    .bg-img {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      z-index: -2;
     }
     body::before {
       content: '';
@@ -86,6 +94,7 @@
   </style>
 </head>
 <body>
+  <img src="summer.jpg" alt="background" class="bg-img">
   <div id="qrcode-container" onclick="window.location.href=window.location.href">
     <div id="qrcode"></div>
   </div>
