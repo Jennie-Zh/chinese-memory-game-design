@@ -80,7 +80,7 @@
     <div id="qrcode"></div>
   </div>
 
-  <h2>🍎 跟Jennie学中文：水果 & 动物</h2>
+  <h2>🌟🍀 跟Jennie学中文 🍀🌟 </h2>
   <div id="gameContainer"></div>
   <div id="winMessage" style="display:none;">🎉 通关成功！</div>
 
@@ -151,16 +151,16 @@
     function checkMatch() {
       const [a, b] = selected;
       if (a.dataset.word === b.dataset.word && a.className !== b.className) {
-        playSound("success.mp3");
+        playSound("success.wav");
         a.style.visibility = 'hidden';
         b.style.visibility = 'hidden';
         matched += 2;
         if (matched === data.length * 4) {
-          playSound("cheer.mp3");
+          playSound("cheer.wav");
           document.getElementById('winMessage').style.display = 'block';
         }
       } else {
-        playSound("fail.mp3");
+        playSound("fail.wav");
         a.classList.remove('selected');
         b.classList.remove('selected');
       }
